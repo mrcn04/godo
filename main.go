@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/joho/godotenv"
 	"net/http"
 	"os"
 	"time"
@@ -14,6 +15,7 @@ type Health struct {
 }
 
 func main() {
+	godotenv.Load(".env")
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
