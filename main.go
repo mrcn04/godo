@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/joho/godotenv"
+	"log"
 	"net/http"
 	"os"
 	"time"
@@ -24,7 +25,7 @@ func main() {
 	http.HandleFunc("/", root)
 	http.HandleFunc("/health", health)
 	fmt.Println("Server started on " + port)
-	http.ListenAndServe(":"+port, nil)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
 func root(w http.ResponseWriter, r *http.Request) {
