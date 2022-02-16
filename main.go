@@ -21,14 +21,9 @@ func main() {
 		port = "8080"
 	}
 
-	http.HandleFunc("/", root)
 	http.HandleFunc("/health", health)
 	log.Println("Server started on " + port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
-}
-
-func root(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
 }
 
 func health(w http.ResponseWriter, r *http.Request) {
