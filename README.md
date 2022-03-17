@@ -9,7 +9,7 @@ A simple todo app with golang
 * How to run the program
 
 ```
-go run ./cmd/main.go
+go run ./cmd
 ```
 
 ### License
