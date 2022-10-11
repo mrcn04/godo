@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Health struct {
