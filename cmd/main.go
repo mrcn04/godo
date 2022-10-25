@@ -17,6 +17,7 @@ type Health struct {
 
 func main() {
 	godotenv.Load("../.env")
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
