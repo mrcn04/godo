@@ -6,7 +6,9 @@ A simple todo app with golang
 
 #### Executing program
 
-* How to run the program
+- Copy variables from `.env.example` to `.env`.
+
+- How to run the program
 
 ```
 go run ./cmd
