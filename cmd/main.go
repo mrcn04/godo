@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/mrcn04/godo/pkg/db"
 	"github.com/mrcn04/godo/pkg/handlers"
 )
@@ -11,12 +12,21 @@ import (
 func main() {
 	init := db.InitDatabase()
 
-	registerRoutes()
+	defer init.DB.Close()
+
+	h := handlers.NewHandler(init.DB)
+
+	r := registerRoutes(h)
 
 	log.Println("Server started on " + init.Port)
-	log.Fatal(http.ListenAndServe(":"+init.Port, nil))
+	log.Fatal(http.ListenAndServe(":"+init.Port, r))
 }
 
-func registerRoutes() {
-	http.HandleFunc("/health", handlers.HandleHealth)
+func registerRoutes(h *handlers.Handler) *mux.Router {
+	r := mux.NewRouter()
+
+	r.HandleFunc("/health", handlers.HandleHealth).Methods("GET")
+	r.HandleFunc("/", h.HandleGetAllTodos).Methods("GET")
+
+	return r
 }
