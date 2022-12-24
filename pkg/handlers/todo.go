@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
-	"log"
 	"net/http"
+	"time"
 
 	"github.com/mrcn04/godo/pkg/models"
+	"github.com/mrcn04/godo/utils"
 )
 
 type Handler struct {
@@ -20,21 +20,54 @@ func NewHandler(db *sql.DB) *Handler {
 }
 
 func (h *Handler) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.Body)
-	todo := models.Todo{}
-	log.Println(todo)
+	var t models.Todo
+
+	timestamp := time.Now()
+	t.Text = r.FormValue("text")
+	t.Created = timestamp.String()
+	t.Updated = timestamp.String()
+
+	if r.FormValue("text") == "" {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	err := h.db.QueryRow(
+		"INSERT INTO todos(text, created_at, updated_at) VALUES($1, $2, $3) returning id",
+		t.Text, timestamp, timestamp,
+	).Scan(&t.ID)
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	utils.RespondWithJSON(w, http.StatusCreated, t)
 }
 
 func (h *Handler) HandleGetAllTodos(w http.ResponseWriter, r *http.Request) {
-	log.Println("getting all todos...")
-
 	rows, err := h.db.Query("select * from todos")
 
 	if err != nil {
-		fmt.Printf("ERROR:: ", err.Error())
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
 	}
 
-	log.Println(rows)
+	var todos []models.Todo
+
+	for rows.Next() {
+		var t models.Todo
+
+		err := rows.Scan(&t.ID, &t.Text, &t.Created, &t.Updated)
+		if err != nil {
+			utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		todos = append(todos, t)
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, todos)
 }
 
 func (h *Handler) HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {

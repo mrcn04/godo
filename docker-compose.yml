@@ -8,13 +8,15 @@ services:
       - 8080:8080
     restart: always
     depends_on:
-      - godo-postgres
+      - db
     links:
-      - godo-postgres
+      - db
+    environment:
+      - DB_HOST=postgres
 
-  godo-postgres:
+  db:
     image: postgres:12
-    container_name: godo-postgres
+    container_name: db
     restart: unless-stopped
     ports:
       - 5432:5432
@@ -24,3 +26,5 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql

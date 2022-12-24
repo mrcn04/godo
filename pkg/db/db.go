@@ -23,7 +23,7 @@ func InitDatabase() *InitDB {
 	}
 
 	var (
-		host     = "localhost"
+		host     = "localhost" // change to host.docker.internal when running with docker
 		dbPort   = 5432
 		user     = os.Getenv("POSTGRES_USER")
 		password = os.Getenv("POSTGRES_PASSWORD")

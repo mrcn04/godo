@@ -15,7 +15,6 @@ func main() {
 	defer init.DB.Close()
 
 	h := handlers.NewHandler(init.DB)
-
 	r := registerRoutes(h)
 
 	log.Println("Server started on " + init.Port)
@@ -26,7 +25,10 @@ func registerRoutes(h *handlers.Handler) *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", handlers.HandleHealth).Methods("GET")
-	r.HandleFunc("/", h.HandleGetAllTodos).Methods("GET")
+	r.HandleFunc("/todos", h.HandleGetAllTodos).Methods("GET")
+	r.HandleFunc("/todos", h.HandleCreateTodo).Methods("POST")
+	r.HandleFunc("/todos/{id}", h.HandleCreateTodo).Methods("UPDATE")
+	r.HandleFunc("/todos/{id}", h.HandleCreateTodo).Methods("DELETE")
 
 	return r
 }
