@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/mrcn04/godo/pkg/models"
-	"github.com/mrcn04/godo/utils"
+	"github.com/mrcn04/godo/pkg/utils"
 )
 
 type Handler struct {
@@ -71,9 +72,59 @@ func (h *Handler) HandleGetAllTodos(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {
+	var t models.Todo
 
+	id := r.FormValue("id")
+	text := r.FormValue("text")
+
+	if id == "" || text == "" {
+		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	err := h.db.QueryRow(
+		"UPDATE todos set text = $1, updated_at = NOW() WHERE id = $2 returning id, updated_at, created_at",
+		text, id,
+	).Scan(&t.ID, &t.Updated, &t.Created)
+
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	t.Text = text
+	utils.RespondWithJSON(w, http.StatusCreated, t)
 }
 
 func (h *Handler) HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
 
+	res, err := h.db.Exec("DELETE from todos WHERE id = $1", id)
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	count, err := res.RowsAffected()
+	if err != nil {
+		utils.RespondWithError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var message string
+	if count > 0 {
+		message = "Item deleted."
+	} else {
+		message = "No item has been deleted."
+	}
+
+	resp := struct {
+		Success bool   `json:"success"`
+		Message string `json:"message"`
+	}{
+		Success: true,
+		Message: message,
+	}
+
+	utils.RespondWithJSON(w, http.StatusOK, resp)
 }
