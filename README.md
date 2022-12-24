@@ -4,11 +4,19 @@ A simple todo app with Golang, PostgreSQL & Docker
 
 ### Getting Started
 
-#### Executing program
+#### Executing the program
 
 - Copy variables from `.env.example` to `.env`.
 
 - How to run the program
+
+With Docker compose
+
+```
+docker-compose up
+```
+
+Or with running Postgresql
 
 ```
 go run ./cmd
