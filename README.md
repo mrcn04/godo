@@ -22,6 +22,13 @@ Or with running Postgresql
 go run ./cmd
 ```
 
+Or run Postgresql with docker compose
+
+```
+docker-compose up db
+go run ./cmd
+```
+
 ### License
 
 This project is [MIT licensed](http://opensource.org/licenses/MIT).
