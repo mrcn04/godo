@@ -24,8 +24,9 @@ go run ./cmd
 
 Or run Postgresql with docker compose
 
+`Postgre will init the todos table automatically`
+
 ```
-### Postgre will init the todos table automatically
 docker-compose up db
 go run ./cmd
 ```
