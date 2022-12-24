@@ -1,6 +1,6 @@
-# GODO
+## GODO
 
-A simple todo app with golang
+A simple todo app with Golang, PostgreSQL & Docker
 
 ### Getting Started
 
