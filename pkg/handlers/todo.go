@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"net/http"
 	"time"
 
@@ -23,17 +24,22 @@ func NewHandler(db *sql.DB) *Handler {
 func (h *Handler) HandleCreateTodo(w http.ResponseWriter, r *http.Request) {
 	var t models.Todo
 
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&t)
+	if err != nil {
+		panic(err)
+	}
+
 	timestamp := time.Now()
-	t.Text = r.FormValue("text")
 	t.Created = timestamp.String()
 	t.Updated = timestamp.String()
 
-	if r.FormValue("text") == "" {
+	if t.Text == "" {
 		utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
-	err := h.db.QueryRow(
+	err = h.db.QueryRow(
 		"INSERT INTO todos(text, created_at, updated_at) VALUES($1, $2, $3) returning id",
 		t.Text, timestamp, timestamp,
 	).Scan(&t.ID)
@@ -93,7 +99,7 @@ func (h *Handler) HandleUpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t.Text = text
-	utils.RespondWithJSON(w, http.StatusCreated, t)
+	utils.RespondWithJSON(w, http.StatusOK, t)
 }
 
 func (h *Handler) HandleDeleteTodo(w http.ResponseWriter, r *http.Request) {

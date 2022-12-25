@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	init := db.InitDatabase()
+	init := db.InitDatabase("")
 
 	defer init.DB.Close()
 

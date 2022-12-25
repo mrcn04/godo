@@ -14,8 +14,14 @@ type InitDB struct {
 	Port string
 }
 
-func InitDatabase() *InitDB {
-	godotenv.Load(".env")
+func InitDatabase(envPath string) *InitDB {
+	var path string
+	if envPath == "" {
+		path = ".env"
+	} else {
+		path = envPath
+	}
+	godotenv.Load(path)
 
 	port := os.Getenv("PORT")
 	if port == "" {
