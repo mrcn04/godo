@@ -31,6 +31,14 @@ docker-compose up db
 go run ./cmd
 ```
 
+### Tests
+
+For running test run this command while db is up and running
+
+```
+go test -v ./test
+```
+
 ### License
 
 This project is [MIT licensed](http://opensource.org/licenses/MIT).
